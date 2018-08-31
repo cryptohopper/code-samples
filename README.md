@@ -1,2 +1,4 @@
-# code-samples
-Code examples of our API integration
+# Cryptohopper Code Samples
+Welcome to our code samples repo! Here you'll various code examples on how to use our services.
+
+Get your Cryptohopper account at http://www.cryptohopper.com/ and sign up for a Developers account. You can then start creating your own apps.
