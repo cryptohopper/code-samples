@@ -14,8 +14,8 @@ if(isset($_POST['app_key']) && isset($_POST['app_secret'])){
 		$_SESSION['app_key'] = $app_key;
 		$_SESSION['app_secret'] = $app_secret;
 	}else{
-		$app_key = 'IZJEke43t5Aw9wOps9pBB6bJZcv3H88ns6Wbikpl1uW2HZ3Z8ejNchcLJWiUzGQV';
-		$app_secret = 'wHs2xDe7ax8UObJuWsJ1t8WJWpQb9OZ8g8pBAN2tFpuZKGv8LGRAWPs2egWBlFxa';
+		$app_key = '';
+		$app_secret = '';
 		$_SESSION['app_key'] = $app_key;
 		$_SESSION['app_secret'] = $app_secret;
 	}
