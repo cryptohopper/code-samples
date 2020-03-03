@@ -1,13 +1,16 @@
 <?php
 
-$access_token = '';
+$api_url = 'https://www.cryptohopper.com';
+$redirect_url = 'http://127.0.0.1/code-samples/oauth_test.php';
 
-if(isset($_POST['access-token'])){
-    if(!empty($_POST['access-token'])){
-        $access_token = $_POST['access-token'];
-    }
-}
-$api_url = 'https://api.cryptohopper.com';
+
+$client_id = isset($_POST['client_id']) ? $_POST['client_id'] : '';
+$client_secret = isset($_POST['client_secret']) ? $_POST['client_secret'] : '';
+$grant_type = 'authorization_code';
+$code = isset($_POST['code']) ? $_POST['code'] : '';
+
+$path = '/oauth2/token';
+
 
 
 ?>
@@ -37,7 +40,7 @@ $api_url = 'https://api.cryptohopper.com';
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#defaultNavbar1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
-            <a class="navbar-brand" href="#">Cryptohopper API Tester</a></div>
+            <a class="navbar-brand" href="#">Cryptohopper OAuth Token</a></div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="defaultNavbar1">
 
@@ -61,35 +64,27 @@ $api_url = 'https://api.cryptohopper.com';
         <div class="col-md-8 col-md-offset-2">
             <form class="form-horizontal" method="post" action="<?php echo $_SERVER['REQUEST_URI'];?>">
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Access token</label>
+                    <label class="col-sm-2 control-label">Client id</label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" name="access-token" value="<?php echo $access_token;?>">
+                        <input type="password" class="form-control" name="client_id" value="<?php echo $client_id;?>">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Operation</label>
+                    <label class="col-sm-2 control-label">Client secret</label>
                     <div class="col-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-addon"><?php echo $api_url;?>/v1/</span>
-                            <input type="text" class="form-control" name="operation" value="<?php if(isset($_POST['operation'])){ echo $_POST['operation'];}?>">
-                        </div>
+                        <input type="password" class="form-control" name="client_secret" value="<?php echo $client_secret;?>">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Method</label>
+                    <label class="col-sm-2 control-label">Code</label>
                     <div class="col-sm-10">
-                        <select class="form-control" name="method">
-                            <option value="GET" <?php if(isset($_POST['method']) && $_POST['method'] == 'GET'){echo 'selected';}?>>GET</option>
-                            <option value="POST" <?php if(isset($_POST['method']) && $_POST['method'] == 'POST'){echo 'selected';}?>>POST</option>
-                            <option value="PATCH" <?php if(isset($_POST['method']) && $_POST['method'] == 'PATCH'){echo 'selected';}?>>PATCH</option>
-                            <option value="DELETE" <?php if(isset($_POST['method']) && $_POST['method'] == 'DELETE'){echo 'selected';}?>>DELETE</option>
-                        </select>
+                        <input type="password" class="form-control" name="code" value="<?php echo $code;?>">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-2 control-label">Data</label>
+                    <label class="col-sm-2 control-label">Grant type</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" name="data" rows="5" cols="20"><?php if(isset($_POST['data'])){ echo $_POST['data'];}?></textarea>
+                        <textarea class="form-control" name="grand_type" rows="5" cols="20"><?php echo $grant_type;?></textarea>
                     </div>
                 </div>
                 <div class="form-group">
@@ -112,77 +107,38 @@ $api_url = 'https://api.cryptohopper.com';
 </div>
 <div class="container">
     <?php
+    if(isset($_POST['client_id']) && isset($_POST['client_secret']) && isset($_POST['code'])) {
+        $ch = curl_init($api_url . $path);
 
-    if(isset($_POST['operation']) && isset($_POST['method'])){
+        $data_array['client_id'] = $_POST['client_id'];
+        $data_array['client_secret'] = $_POST['client_secret'];
+        $data_array['code'] = $_POST['code'];
+        $data_array['grant_type'] = $grant_type;
+        $data_array['redirect_uri'] = $redirect_url;
 
-        $operation = $_POST['operation'];
-        $method = $_POST['method'];
+        $data_string = json_encode($data_array);
 
-        $path = '/v1/'.$operation;
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Content-Length: ' . strlen($data_string);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-        $headers = array(
-            'access-token: '.$access_token,
-        );
-
-        $data_string = $_POST['data'];
-
-        $ch = curl_init($api_url.$path);
-
-        if($method == 'POST'){
-            $headers[] = 'Content-Type: application/json';
-            $headers[] = 'Content-Length: ' . strlen($data_string);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        }elseif($method == 'GET'){
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-
-        }elseif($method == 'PATCH'){
-            $headers[] = 'Content-Type: application/json';
-            $headers[] = 'Content-Length: ' . strlen($data_string);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        }elseif($method == 'DELETE'){
-            $headers[] = 'Content-Type: application/json';
-            $headers[] = 'Content-Length: ' . strlen($data_string);
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        }
 
         $result = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $error = curl_error($ch);
 
         $result_json = json_decode($result, true);
-        if(is_array($result_json)){
+        if (is_array($result_json)) {
             $result_json = json_encode($result_json, JSON_PRETTY_PRINT);
         }
 
-        echo '<h3>Endpoint: <strong>'.$operation.'</strong></h3>';
-        echo '<h3>Method: <strong>'.$method.'</strong></h3>';
-        echo '<h3>Status code: <strong>'.$httpcode.'</strong></h3><br><hr>';
-        echo '<h3>Result</h3><br><br><pre>';
-        if(!empty($result_json)){
-            echo $result_json;
-        }else{
-            echo $result;
-        }
-        echo '</pre><br><br>';
-        if(!empty($error)){
-            echo '<h3>Error</h3><br><br>';
-            echo $error;
-        }
-        curl_close($ch);
-    }else{
-        echo '<p class="bg-info" style="padding:20px;">No API test results to show.</p>';
+        var_dump($result_json);
 
-    }// POST
+        curl_close($ch);
+    }
     ?>
     <hr>
     <div class="row">

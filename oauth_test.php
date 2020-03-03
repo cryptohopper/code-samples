@@ -2,10 +2,11 @@
 session_start();
 
 $api_url = 'https://www.cryptohopper.com';
-$redirect_url = 'http://localhost/code-samples/oauth_test.php';
+$redirect_url = 'http://127.0.0.1/code-samples/oauth_test.php';
 
-$app_key = $_SESSION['app_key'];
-$app_secret = $_SESSION['app_secret'];
+
+$app_key = '';
+$app_secret = '';
 
 if(isset($_POST['app_key']) && isset($_POST['app_secret'])){
 	if(!empty($_POST['app_key']) && !empty($_POST['app_secret'])){
@@ -19,13 +20,15 @@ if(isset($_POST['app_key']) && isset($_POST['app_secret'])){
 		$_SESSION['app_key'] = $app_key;
 		$_SESSION['app_secret'] = $app_secret;
 	}
-	$_SESSION['method'] = $_POST['method'];
+
 	$_SESSION['state'] = $_POST['state'];
 
-	$path = '/oauth/'.$_SESSION['method'].'?app_key='.$app_key.'&state='.urlencode($_SESSION['state']).'&redirect_uri='.urlencode($redirect_url);
+	$path = '/oauth2/authorize?response_type=code&client_id='.$app_key.'&state='.urlencode($_SESSION['state']).'&redirect_uri='.urlencode($redirect_url) . '&scope=read';
 	$signature = hash_hmac('sha512', $path, $app_secret);
+
 	header('Location: '.$api_url.$path.'&signature='.$signature);
 }
+
 
 $data = '';
 if(is_array($_GET) && !empty($_GET)){
@@ -94,18 +97,10 @@ if(is_array($_GET) && !empty($_GET)){
 					<input type="password" class="form-control" name="app_secret" value="<?php echo $app_secret;?>">
 			</div>
 		  </div>
-        <div class="form-group">
-			<label class="col-sm-2 control-label">Operation</label>
-			<div class="col-sm-10">
-				<select class="form-control" name="method">
-					<option value="access_tokens" <?php if(!$_SESSION['method'] || $_SESSION['method'] == 'access_tokens'){echo 'selected';}?>>access_tokens</option>
-				</select>
-			</div>
-		  </div>
 		    <div class="form-group">
 			<label class="col-sm-2 control-label">State</label>
 			<div class="col-sm-10">
-				<textarea class="form-control" name="state" rows="5" cols="20"><?php echo $_SESSION['state'];?></textarea>
+				<textarea class="form-control" name="state" rows="5" cols="20"><?php echo isset($_SESSION['state']) ? $_SESSION['state'] : '';?></textarea>
 			</div>
 		  </div>
 		   <div class="form-group">
@@ -131,9 +126,9 @@ if(is_array($_GET) && !empty($_GET)){
 
 if(!empty($data)){
 
+    $state = isset($_SESSION['state']) ? : '';
 
-	echo '<h3>Endpoint: <strong>'.$_SESSION['method'].'</strong></h3>';
-	echo '<h3>State: <strong>'.$_SESSION['state'].'</strong></h3><br><hr>';
+	echo '<h3>State: <strong>'.$state.'</strong></h3><br><hr>';
 	echo '<h3>Result</h3><br><br><pre>';
 	echo $data;
 	echo '</pre><br><br>';
