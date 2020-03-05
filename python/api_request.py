@@ -1,7 +1,9 @@
 import requests
 
 access_token = '[ACCESS TOKEN]'
-uri = 'https://api.cryptohopper.com/v1/hopper'
+base_url = 'https://api.cryptohopper.com/v1/'
+endpoint = 'hopper'
+uri = base_url + endpoint
 headers = {
 	'access-token': access_token
 }
