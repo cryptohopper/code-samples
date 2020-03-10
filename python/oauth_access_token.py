@@ -3,7 +3,9 @@ import requests
 client_id = '[CLIENT ID]'
 client_secret = '[CLIENT SECRET]'
 redirect_uri = 'http://localhost/'
-scope = 'read,notifications,manage,trade' # Change the scope so that it matches the scope from your app
+
+# Use the same scope as the one in the Cryptohopper app console
+scope = 'read,notifications,manage,trade'
 
 authorize_url = 'https://www.cryptohopper.com/oauth2/authorize'
 code_uri = authorize_url + '?client_id=' + client_id + '&response_type=code&scope=' + scope + '&state=any&redirect_uri=' + redirect_uri
