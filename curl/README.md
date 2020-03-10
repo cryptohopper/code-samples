@@ -16,11 +16,11 @@ https://www.cryptohopper.com/oauth2/authorize?response_type=code&client_id=[CLIE
 ```
 <br />
 Parameters: <br />
-**response_type** _(required)_ value must be: code <br />
-**client_id** _(required)_ can be found in the Cryptohopper app console <br />
-**state** _(required)_ value doesn't matter, we use: any <br />
-**scope** _(required)_ can be found in the Cryptohopper app console (example: read,notifications,manage,trade) <br />
-**redirect_uri** _(required)_ example: http://localhost/ <br />
+<strong>response_type</strong> <i>(required)</i> value must be: code <br />
+<strong>client_id</strong> <i>(required)</i> can be found in the Cryptohopper app console <br />
+<strong>state</strong> <i>(required)</i> value doesn't matter, we use: any <br />
+<strong>scope</strong> <i>(required)</i> can be found in the Cryptohopper app console (example: read,notifications,manage,trade) <br />
+<strong>redirect_uri</strong> <i>(required)</i> example: http://localhost/ <br />
 <br />
 
 Response:<br />
@@ -40,15 +40,15 @@ $ curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "grant_ty
 ```
 <br />
 Parameters: <br />
-**grant_type** _(required)_ value must be: authorization_code <br />
-**code** _(required)_ received in the last step <br />
-**redirect_uri** _(required)_ example: http://localhost/ <br />
-**client_id** _(required)_ can be found in the Cryptohopper app console <br />
-**client_secret** _(required)_ can be found in the Cryptohopper app console <br />
+<strong>grant_type</strong> <i>(required)</i> value must be: authorization_code <br />
+<strong>code</strong> <i>(required)</i> received in the last step <br />
+<strong>redirect_uri</strong> <i>(required)</i> example: http://localhost/ <br />
+<strong>client_id</strong> <i>(required)</i> can be found in the Cryptohopper app console <br />
+<strong>client_secret</strong> <i>(required)</i> can be found in the Cryptohopper app console <br />
 <br />
 
 Example response:
-```json
+```
 {
 "access_token": [ACCESS TOKEN],
 "expires_in": 31556952,
@@ -58,3 +58,4 @@ Example response:
 }
 ```
 <br />
+
