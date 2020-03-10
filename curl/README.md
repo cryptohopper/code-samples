@@ -59,3 +59,12 @@ Example response:
 ```
 <br />
 
+## Using the access token
+This is an example for making a request to the Cryptohopper API. The <i>/hopper</i> endpoint can be replaced with other endpoints. To view all of the endpoints go to: https://api.cryptohopper.com/v1. 
+```
+$ curl -i -H "access-token: [ACCESS TOKEN]" https://api.cryptohopper.com/v1/hopper
+```
+<br />
+Parameters: <br />
+<strong>access-token</strong> <i>(required)</i> <br />
+<br />
