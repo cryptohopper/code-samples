@@ -1,6 +1,11 @@
 # Curl implementation
 This Curl implementation can be translated to use for every kind of programming language that can do http requests. 
-TODO: Meer uitleg
+<br /><br />
+Steps:
+1. Authorize with [Authorization Code Grant](#authorization-code-grant). You'll be redirected to Cryptohopper.com if you are not logged in. Login and try again.
+2. Save the token received in the last step.
+3. Get an access token with [Requesting an access token](#requesting-an-access-token).
+4. Now you can use the access token to do requests.
 <br />
 
 ## Authorization Code Grant
