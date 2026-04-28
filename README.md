@@ -9,8 +9,8 @@ Practical, runnable examples for the [Cryptohopper](https://www.cryptohopper.com
 | [`quickstart/`](./quickstart/) | A "hello world" per language — authenticate and make one API call. Pick this if you're new. |
 | [`oauth/`](./oauth/) | Drive the three-leg OAuth2 consent flow end to end (server-side apps that need to obtain tokens for users). |
 | [`webhooks/`](./webhooks/) | Receive webhook events from Cryptohopper (order fills, signals). |
-| [`recipes/`](./recipes/) | Cross-language patterns: poll a backtest, fan out positions, retry strategy, stream new fills. *(coming in the next batch)* |
-| [`cli/`](./cli/) | Shell scripts that combine `cryptohopper` CLI commands with `jq` for ops automation. *(coming in the next batch)* |
+| [`recipes/`](./recipes/) | Cross-language patterns: poll a backtest, fan out positions, retry strategy, stream new fills. |
+| [`cli/`](./cli/) | Shell scripts that combine `cryptohopper` CLI commands with `jq` for ops automation. |
 
 ## Browse by language
 
@@ -20,7 +20,7 @@ Every official Cryptohopper SDK ships an alpha-quality "0.x" release on its nati
 |----------|-----------|-----------|----------|
 | **Node.js** | [`quickstart/nodejs/`](./quickstart/nodejs/) | [`oauth/nodejs/`](./oauth/nodejs/) | [`@cryptohopper/sdk`](https://www.npmjs.com/package/@cryptohopper/sdk) |
 | **Python** | [`quickstart/python/`](./quickstart/python/) | [`oauth/python/`](./oauth/python/) | [`cryptohopper`](https://pypi.org/project/cryptohopper/) |
-| **Go** | [`quickstart/go/`](./quickstart/go/) | — | [`cryptohopper-go-sdk`](https://pkg.go.dev/github.com/cryptohopper/cryptohopper-go-sdk) |
+| **Go** | [`quickstart/go/`](./quickstart/go/) | [`oauth/go/`](./oauth/go/) | [`cryptohopper-go-sdk`](https://pkg.go.dev/github.com/cryptohopper/cryptohopper-go-sdk) |
 | **Ruby** | [`quickstart/ruby/`](./quickstart/ruby/) | — | [`cryptohopper`](https://rubygems.org/gems/cryptohopper) |
 | **Rust** | [`quickstart/rust/`](./quickstart/rust/) | — | [`cryptohopper`](https://crates.io/crates/cryptohopper) |
 | **PHP** | [`quickstart/php/`](./quickstart/php/) | [`oauth/php/`](./oauth/php/) | [`cryptohopper/sdk`](https://packagist.org/packages/cryptohopper/sdk) |
