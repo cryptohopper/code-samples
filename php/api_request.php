@@ -1,13 +1,18 @@
 <?php
 $access_token = 'ENTER_YOUR_ACCESS_TOKEN';
+$api_url = 'https://api.cryptohopper.com';
 $operation = 'hopper';
 $method = 'GET';
 $data_string = '{}';
 
 $path = '/v1/'.$operation;
 
+// Cryptohopper Public API v1 uses the `access-token` header (with a
+// hyphen), NOT `access_token` and NOT `Authorization: Bearer`. The AWS
+// API Gateway in front of the production API rejects anything else.
+// See https://www.cryptohopper.com/api-documentation/how-the-api-works
 $headers = array(
-    'access_token: '.$access_token
+    'access-token: '.$access_token
 );
 
 $ch = curl_init($api_url.$path);
