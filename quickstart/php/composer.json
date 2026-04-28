@@ -1,0 +1,11 @@
+{
+    "name": "cryptohopper/php-quickstart",
+    "description": "Cryptohopper PHP SDK quickstart — single hello-world script.",
+    "type": "project",
+    "require": {
+        "php": ">=8.1",
+        "cryptohopper/sdk": "^0.1.0-alpha.2"
+    },
+    "minimum-stability": "alpha",
+    "prefer-stable": true
+}
