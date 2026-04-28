@@ -1,0 +1,13 @@
+name: cryptohopper_quickstart
+description: Cryptohopper Dart SDK quickstart — single hello-world script.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.2.0
+
+dependencies:
+  cryptohopper:
+    git:
+      url: https://github.com/cryptohopper/cryptohopper-dart-sdk
+      ref: v0.1.0-alpha.2

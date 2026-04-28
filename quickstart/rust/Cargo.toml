@@ -1,0 +1,10 @@
+[package]
+name = "cryptohopper-quickstart"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+cryptohopper = "0.1.0-alpha.2"
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
