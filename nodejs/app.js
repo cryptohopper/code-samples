@@ -1,104 +1,107 @@
-const express = require('express');
-const path = require('path');
-const axios = require('axios');
+// Cryptohopper OAuth2 sample — Node.js 18+, no third-party HTTP client.
+//
+// Demonstrates the three-leg OAuth2 authorization-code flow against
+// cryptohopper.com and one authenticated call against api.cryptohopper.com.
+//
+// Set CRYPTOHOPPER_CLIENT_ID and CRYPTOHOPPER_CLIENT_SECRET in your env
+// (issue these from https://www.cryptohopper.com developer dashboard).
 
-const { ClientCredentials, ResourceOwnerPassword, AuthorizationCode } = require('simple-oauth2');
+const express = require('express');
+const crypto = require('crypto');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-const cryptohopperURL = 'https://www.cryptohopper.com';
-const clientID = '';
-const clientSecret = '';
-const redirectURI = 'http://localhost:3000/callback';
+const CRYPTOHOPPER_HOST = 'https://www.cryptohopper.com';
+const API_HOST = 'https://api.cryptohopper.com';
 
-const client = new AuthorizationCode({
-    client: {
-        id: clientID,
-        secret: clientSecret
-    },
-    auth: {
-        tokenHost: cryptohopperURL,
-        authorizeHost: cryptohopperURL,
-        tokenPath: '/oauth2/token',
-        authorizePath: '/oauth2/authorize'
-    }
-});
+const clientID = process.env.CRYPTOHOPPER_CLIENT_ID || '';
+const clientSecret = process.env.CRYPTOHOPPER_CLIENT_SECRET || '';
+const redirectURI = `http://localhost:${port}/callback`;
 
-var token = {};
+if (!clientID || !clientSecret) {
+    console.warn(
+        '⚠ Set CRYPTOHOPPER_CLIENT_ID and CRYPTOHOPPER_CLIENT_SECRET in your\n' +
+        '   environment before starting this sample. The /auth flow will fail\n' +
+        '   without them.'
+    );
+}
 
-/* 
-    '/' is a protected resource:
-    
-    - if the access token is not set (yet) then access is forbidden
-    - if the access token is set then use it to call an API endpoint
-*/
-app.get('/', (req, res) => {
-    if (!token.access_token) {
-        res.send('Unauthorized. Please visit http://localhost:' + port + '/auth to login')
+let token = null;
 
-        return
-    }
-
-    axios.get('https://api.cryptohopper.com/v1/hopper', { headers: { 'access-token': token.access_token } })
-        .then(response => {
-            console.log(response);
-
-            res.send(JSON.stringify(response.data));
-        })
-        .catch(error => {
-            console.log(error);
-
-            res.send(error);
-        });    
-});
-
-/*
-    '/auth' redirects the client to cryptohopper.com for the user to grant authorization to the app.
-
-    In case of success, the client is redirected back to the specified URI '/callback'.
-*/
-app.get('/auth', (req, res) => {
-    const authorizationUri = client.authorizeURL({
-        redirect_uri: redirectURI,
-        scope: 'read',
-        state: 'any'
-    });
-
-    res.redirect(authorizationUri);
-});
-
-/*
-    '/callback' expects a `code` query parameter, from the OAuth redirect. 
-
-    The `code` is then used to retrieve the actual OAuth access_token.
-*/
-app.get('/callback', async (req, res, next) => {
-    if (!req.query.code) {
-        res.send('missing authorization code.')
-
-        return
+// '/' is the protected resource. It calls one API endpoint with the access
+// token to demonstrate that the token works.
+app.get('/', async (req, res, next) => {
+    if (!token?.access_token) {
+        return res.send(
+            `Unauthorized. Visit <a href="/auth">/auth</a> to log in.`
+        );
     }
 
     try {
-        response = await client.getToken({
-            code: req.query.code,
-            redirect_uri: redirectURI
+        // The Cryptohopper public API uses the `access-token` HTTP header,
+        // NOT the OAuth2-conventional `Authorization: Bearer`. The AWS API
+        // Gateway in front of the production API rejects Bearer with a
+        // SigV4 parser error. See:
+        //   https://www.cryptohopper.com/api-documentation/how-the-api-works
+        const r = await fetch(`${API_HOST}/v1/hopper`, {
+            headers: { 'access-token': token.access_token },
         });
-
-        // to refresh the token:
-        //
-        // let accessToken = client.createToken(response.token);
-        // accessToken = await accessToken.refresh({scope: 'read'});
-
-        token = response.token;
-
-        res.redirect('/');
+        const data = await r.json();
+        res.json(data);
     } catch (err) {
-        console.log('access token error', err.message)
         next(err);
     }
 });
 
-app.listen(port);
-console.log('Server started at http://localhost:' + port);
+// '/auth' redirects the browser to cryptohopper.com for the user to grant
+// authorization to this app.
+app.get('/auth', (req, res) => {
+    const params = new URLSearchParams({
+        client_id: clientID,
+        redirect_uri: redirectURI,
+        response_type: 'code',
+        scope: 'read',
+        // Random CSRF state. In production you'd persist this per-session
+        // and verify it on the callback.
+        state: crypto.randomBytes(16).toString('hex'),
+    });
+    res.redirect(`${CRYPTOHOPPER_HOST}/oauth2/authorize?${params}`);
+});
+
+// '/callback' receives the OAuth `code` and exchanges it for an access token.
+app.get('/callback', async (req, res, next) => {
+    if (!req.query.code) {
+        return res.status(400).send('missing authorization code.');
+    }
+
+    try {
+        const body = new URLSearchParams({
+            grant_type: 'authorization_code',
+            client_id: clientID,
+            client_secret: clientSecret,
+            redirect_uri: redirectURI,
+            code: req.query.code,
+        });
+
+        const r = await fetch(`${CRYPTOHOPPER_HOST}/oauth2/token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString(),
+        });
+
+        if (!r.ok) {
+            const text = await r.text();
+            return res.status(502).send(`token exchange failed (${r.status}): ${text}`);
+        }
+
+        token = await r.json();
+        res.redirect('/');
+    } catch (err) {
+        next(err);
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server started at http://localhost:${port}`);
+});

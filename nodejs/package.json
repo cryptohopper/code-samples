@@ -1,26 +1,23 @@
 {
-  "name": "samples",
-  "version": "1.0.0",
-  "description": "Cryptohopper OAuth2 samples",
+  "name": "cryptohopper-oauth-sample",
+  "version": "2.0.0",
+  "description": "Cryptohopper OAuth2 sample (Node.js 18+, no third-party HTTP client)",
   "main": "app.js",
-  "dependencies": {
-    "axios": "^0.21.1",
-    "express": "^4.17.1",
-    "simple-oauth2": "^4.2.0"
+  "private": true,
+  "engines": {
+    "node": ">=18"
   },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js"
   },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cryptohopper/code-samples.git"
   },
-  "keywords": [
-    "oauth"
-  ],
-  "author": "Fabio Bozzo",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/cryptohopper/code-samples/issues"
   },
